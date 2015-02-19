@@ -1,0 +1,274 @@
+
+// Color:
+$ORANGE: #ffa000;
+$YELLOW: rgb(255, 200, 0);
+$LIGHT-BLUE: #40c4ff;
+$OCEAN: #0097a7;
+$LIGHT-GREEN: #69F0AE;
+$LIME: #aeea00;
+$VIOLET: #3949ab;
+$WHITE: #FFF;
+$LIGHT-GREY: #999;
+$GREY: #666;
+
+// Mixins:
+@mixin transition( $t: flex 0.4s ease-in-out ) {
+  -webkit-transition: $t;
+  transition: $t;
+}
+
+@mixin userSelection( $P: default ) {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  cursor: $P;
+}
+
+@mixin hw( $h: 100px, $w: 100px ) {
+  height: $h;
+  width: $w;
+}
+
+@mixin borderRadius( $r: 100px ) {
+  -webkit-border-radius: $r;
+  -moz-border-radius: $r;
+  border-radius: $r;
+}
+
+@mixin circleItem( $r: 35px ) {
+  @include borderRadius( $r );
+  line-height: $r;
+  height: $r;
+  width: $r;
+  vert-align: middle;
+  text-align: center;
+}
+
+@mixin circleImg( $R: 80px ) {
+  @include hw( $R, $R );
+  @include borderRadius( $R );
+  display: block !important;
+  margin: 10px;
+}
+
+// Tags:
+html, body, ul, li, div {
+  font-family: "Roboto", sans-serif;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  @include hw( 100%, 100% );
+  background-color: $YELLOW;
+}
+
+nav {
+  background-color: $VIOLET;
+}
+
+// FLex
+#main-container {
+  @include hw( 100%, 100% );
+  display: flex;
+  list-style: none;
+  flex-flow: row nowrap;
+}
+
+.main-item {
+  @include transition();
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1 2 25%;
+  height: 100%;
+  &:hover, &:active {
+    flex: 0.0000001 0.0000001 600px;
+  }
+}
+
+// Items:
+.item-title {
+  @include userSelection();
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  color: $WHITE;
+}
+
+#item-users {
+  background-color: $LIGHT-BLUE;
+}
+
+#item-massages {
+  background-color: $LIGHT-GREEN;
+}
+
+#item-profile {
+  background-color: $VIOLET;
+}
+
+// Book-card:
+.book-card, .user-card {
+  @include transition( height 0.4s ease-in-out );
+  @include hw( 100px, 500px );
+  margin: 10px 50px;
+  overflow: hidden;
+}
+
+.user-card-active {
+  height: 270px;
+}
+
+.book-card {
+  &:hover, &:active {
+    height: 250px;
+  }
+}
+
+.book-card-user, .user-card-user, .user-card-msg {
+  @include userSelection( pointer );
+  @include transition( color 0.4s ease-in-out );
+  border-bottom: 4px solid lighten( $YELLOW, 30% );
+  &:hover, &:active {
+    color: $LIGHT-GREY;
+  }
+}
+
+.user-card-user {
+  border-bottom: 4px solid lighten( $LIGHT-BLUE, 25% );
+}
+
+.user-card-msg {
+  border-bottom: 4px solid lighten( $LIGHT-GREEN, 20% );
+}
+
+.count, .btn-write, .delete {
+  position: absolute;
+  display: block;
+  left: 455px;
+  top: 32px;
+}
+
+.count, .delete {
+  @include circleItem();
+  border: 1px solid $LIGHT-GREY;
+  color: $LIGHT-GREY;
+}
+
+.delete {
+  border: none;
+  color: $WHITE;
+}
+
+.btn-write, .btn-send {
+  font-size: 14px;
+  width: 120px;
+  left: 370px;
+}
+
+.btn-send {
+  left: 360px;
+}
+
+.btn-edit {
+  right: 20px;
+}
+
+.book-card-article {
+  @include hw( auto, 100% );
+  padding: 0 10px;
+  font-size: 16px;
+  overflow: hidden;
+  &:first-letter {
+    padding-left: 25px;
+  }
+}
+
+.user-img-small {
+  @include circleImg();
+}
+
+.user-img-large {
+  @include circleImg( 250px );
+  display: block;
+  margin: auto;
+}
+
+.user-name, .user-name-center, .user-time {
+  position: absolute;
+  top: 24px;
+  left: 100px;
+  display: block;
+  font-size: 24px;
+}
+
+.user-name-center {
+  top: 32px;
+}
+
+.message-row {
+  padding: 0 10px 10px 10px;
+  float: right;
+  textarea {
+    @include hw( 90px, 480px );
+    max-height: 90px;
+    max-width: 480px;
+    overflow: hidden;
+    padding: 5px;
+    color: $GREY;
+  }
+}
+
+textarea {
+  border: none !important;
+  outline: none;
+  &:hover, &:active, &:focus {
+    outline: none;
+    border: none !important;
+    border-color: transparent !important;
+  }
+}
+
+.user-time {
+  top: 58px;
+  font-size: 14px;
+  color: $LIGHT-GREY;
+}
+
+.btn {
+  background-color: $YELLOW;
+}
+
+.msg-input, .msg-output {
+  @include hw( auto, 100% );
+}
+
+.span-grey {
+  color: $LIGHT-GREY;
+}
+
+.text-color-white {
+  color: $WHITE;
+}
+
+.brand-logo {
+  padding: 0 20px !important;
+}
+
+.btn-in {
+  top: 12px;
+  margin: 0 20px !important;
+}
+
+// Scrollbar:
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,0,0,0.8);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255,0,0,0.4);
+}

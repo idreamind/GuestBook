@@ -1,0 +1,23 @@
+{
+  "name": "GuestBook",
+  "version": "0.1.0",
+  "authors": [
+    "dreamind <kos.voit@gmail.com>"
+  ],
+  "description": "Guest Book for IIT",
+  "main": "index.html",
+  "keywords": [
+    "Guest",
+    "Book",
+    "Materialize"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

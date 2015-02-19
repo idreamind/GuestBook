@@ -1,0 +1,206 @@
+html, body, ul, li, div {
+  font-family: "Roboto", sans-serif;
+  border: none;
+  padding: 0;
+  margin: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background-color: #ffc800; }
+
+nav {
+  background-color: #3949ab; }
+
+#main-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  list-style: none;
+  flex-flow: row nowrap; }
+
+.main-item {
+  -webkit-transition: flex 0.4s ease-in-out;
+  transition: flex 0.4s ease-in-out;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1 2 25%;
+  height: 100%; }
+  .main-item:hover, .main-item:active {
+    flex: 0.0000001 0.0000001 600px; }
+
+.item-title {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  cursor: default;
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  color: white; }
+
+#item-users {
+  background-color: #40c4ff; }
+
+#item-massages {
+  background-color: #69f0ae; }
+
+#item-profile {
+  background-color: #3949ab; }
+
+.book-card, .user-card {
+  -webkit-transition: height 0.4s ease-in-out;
+  transition: height 0.4s ease-in-out;
+  height: 100px;
+  width: 500px;
+  margin: 10px 50px;
+  overflow: hidden; }
+
+.user-card-active {
+  height: 270px; }
+
+.book-card:hover, .book-card:active {
+  height: 250px; }
+
+.book-card-user, .user-card-user, .user-card-msg {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  cursor: pointer;
+  -webkit-transition: color 0.4s ease-in-out;
+  transition: color 0.4s ease-in-out;
+  border-bottom: 4px solid #ffe999; }
+  .book-card-user:hover, .book-card-user:active, .user-card-user:hover, .user-card-user:active, .user-card-msg:hover, .user-card-msg:active {
+    color: #999999; }
+
+.user-card-user {
+  border-bottom: 4px solid #c0ebff; }
+
+.user-card-msg {
+  border-bottom: 4px solid #c6f9e0; }
+
+.count, .btn-write, .delete {
+  position: absolute;
+  display: block;
+  left: 455px;
+  top: 32px; }
+
+.count, .delete {
+  -webkit-border-radius: 35px;
+  -moz-border-radius: 35px;
+  border-radius: 35px;
+  line-height: 35px;
+  height: 35px;
+  width: 35px;
+  vert-align: middle;
+  text-align: center;
+  border: 1px solid #999999;
+  color: #999999; }
+
+.delete {
+  border: none;
+  color: white; }
+
+.btn-write, .btn-send {
+  font-size: 14px;
+  width: 120px;
+  left: 370px; }
+
+.btn-send {
+  left: 360px; }
+
+.btn-edit {
+  right: 20px; }
+
+.book-card-article {
+  height: auto;
+  width: 100%;
+  padding: 0 10px;
+  font-size: 16px;
+  overflow: hidden; }
+  .book-card-article:first-letter {
+    padding-left: 25px; }
+
+.user-img-small {
+  height: 80px;
+  width: 80px;
+  -webkit-border-radius: 80px;
+  -moz-border-radius: 80px;
+  border-radius: 80px;
+  display: block !important;
+  margin: 10px; }
+
+.user-img-large {
+  height: 250px;
+  width: 250px;
+  -webkit-border-radius: 250px;
+  -moz-border-radius: 250px;
+  border-radius: 250px;
+  display: block !important;
+  margin: 10px;
+  display: block;
+  margin: auto; }
+
+.user-name, .user-name-center, .user-time {
+  position: absolute;
+  top: 24px;
+  left: 100px;
+  display: block;
+  font-size: 24px; }
+
+.user-name-center {
+  top: 32px; }
+
+.message-row {
+  padding: 0 10px 10px 10px;
+  float: right; }
+  .message-row textarea {
+    height: 90px;
+    width: 480px;
+    max-height: 90px;
+    max-width: 480px;
+    overflow: hidden;
+    padding: 5px;
+    color: #666666; }
+
+textarea {
+  border: none !important;
+  outline: none; }
+  textarea:hover, textarea:active, textarea:focus {
+    outline: none;
+    border: none !important;
+    border-color: transparent !important; }
+
+.user-time {
+  top: 58px;
+  font-size: 14px;
+  color: #999999; }
+
+.btn {
+  background-color: #ffc800; }
+
+.msg-input, .msg-output {
+  height: auto;
+  width: 100%; }
+
+.span-grey {
+  color: #999999; }
+
+.text-color-white {
+  color: white; }
+
+.brand-logo {
+  padding: 0 20px !important; }
+
+.btn-in {
+  top: 12px;
+  margin: 0 20px !important; }
+
+::-webkit-scrollbar {
+  width: 10px; }
+
+::-webkit-scrollbar-track {
+  background-color: transparent; }
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 0, 0, 0.8); }
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 0, 0, 0.4); }
