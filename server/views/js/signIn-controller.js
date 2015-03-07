@@ -9,9 +9,9 @@
         .module( 'GuestBook' )
         .controller( 'SignIn', SignIn );
 
-    SignIn.$inject = ['$scope'];
+    SignIn.$inject = ['$scope', '$http'];
 
-    function SignIn( $scope ) {
+    function SignIn( $scope, $http ) {
 
         var sign    = this,
             tempDB  = new CollectionsDB,
@@ -26,9 +26,19 @@
             };
 
         // Temp DB:
-        sign.book     = tempDB.guestBook;
-        sign.users    = tempDB.usersList;
-        sign.profiles = tempDB.userProfileList;
+        sign.book = [ {
+            id: "1",
+            author: "Gregory House",
+            time: "06.02.2015 9:54",
+            text: "Something went wrong...",
+            img: "img/imgUsers/1.jpg",
+            count: "1"
+        } ];
+        sign.users = [ {
+            id: "1",
+            author: "Gregory House",
+            img: "img/imgUsers/1.jpg"
+        } ];
 
         // Init Variables:
         sign.isSignIn = 1;
@@ -37,6 +47,9 @@
         sign.pass     = null;
         sign.errMail  = "";
         sign.errPass  = "";
+
+        // Sub Controllers:
+        getDataFromServer();
 
         // Watchers:
         $scope.$watch( 'sign.mail', validOnFlyMail );
@@ -103,6 +116,20 @@
                 isOk[1] = 0;
                 sign.errPass = "Password: " + validList.str;
             }
+        }
+
+
+        // Get Data from Server:
+        function getDataFromServer() {
+            $http.get('/in')
+                .success( function( data, status, headers, config ) {
+                // this callback will be called asynchronously
+                // when the response is available
+                } )
+                .error( function( data, status, headers, config ) {
+
+                } );
+            console.log(' Get Data ');
         }
 
         return sign;
