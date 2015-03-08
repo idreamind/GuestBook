@@ -1,0 +1,25 @@
+{
+  "name": "GuestBook",
+  "version": "0.1.1",
+  "description": "Guest Book App",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.11.2",
+    "mongodb": "^1.4.33"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/idreamind/GuestBook.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/idreamind/GuestBook/issues"
+  },
+  "homepage": "https://github.com/idreamind/GuestBook"
+}
