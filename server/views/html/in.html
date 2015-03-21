@@ -1,21 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Guest Book</title>
-    <link rel="icon" type="img/png" href="../img/fav/fav.png">
-    <link rel="stylesheet" type="text/css" href="../vendors/materialize/bin/materialize.css">
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
-</head>
-<body>
-
 <nav>
     <div class="nav-wrapper z-depth-1">
         <a href="#" class="brand-logo">Guest Book</a>
         <form>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li class="input-field">
-                    <div class="btn waves-effect waves-light btn-in">
+                    <div class="btn waves-effect waves-light btn-in" ng-click="sign.signOut()">
                         <span>OUT</span>
                     </div>
                 </li>
@@ -29,111 +18,100 @@
             <h2 class="item-title">
                 Book
             </h2>
-
-            <div class="book-card card">
+            <!--Articles: -->
+            <div class="book-card card" ng-repeat="item in sign.book">
                 <div class="row book-card-user">
-                    <img src="../img/user.JPG" alt="User Name" class="user-img-small z-depth-1">
-                    <span class="user-name">
-                        User Name
-                    </span>
-                    <span class="user-time">
-                        06.02.2015 9:54
-                    </span>
-                    <span class="count">1</span>
+                    <img src="{{item.imgSrc}}" alt="{{item.user}}" class="user-img-small z-depth-1">
+                    <span class="user-name">{{item.user}}</span>
+                    <span class="user-time">{{item.time}}</span>
+                    <span class="count">{{item.idArticle}}</span>
                 </div>
                 <div class="row">
-                    <div class="book-card-article">
-                        Great Book! Nice to see too cool application like that! My congratulations to developers team!
-                        In my mind I dream about so fine and sexy app! You the Best!
-                    </div>
+                    <div class="book-card-article">{{item.text}}</div>
                 </div>
             </div>
-
+            <!-- I Have to Say -->
             <div class="user-card card user-card-active">
                 <div class="row book-card-user">
                     <img src="../img/user.JPG" alt="User Name" class="user-img-small z-depth-1">
-                    <span class="user-name-center">
-                        I have to say:
-                    </span>
+                        <span class="user-name-center">
+                            I have to say:
+                        </span>
                 </div>
                 <div class="row message-row">
                     <textarea name="message" maxlength="300"></textarea>
                     <span class="btn red waves-effect waves-light btn-send">Add</span>
                 </div>
             </div>
-
         </div>
+        <!-- Users: -->
         <div class="main-item z-depth-2" id="item-users">
             <h2 class="item-title">
                 Users
             </h2>
-
-            <div class="user-card card user-card-active">
+            <!--Users List: -->
+            <div class="user-card card" ng-repeat="user in sign.users"> <!-- THIS -->
                 <div class="row user-card-user">
-                    <img src="../img/user.JPG" alt="User Name" class="user-img-small z-depth-1">
-                    <span class="user-name-center">
-                        User Name
-                    </span>
-                    <span class="btn waves-effect waves-light btn-write">WRITE</span>
+                    <img src="{{user.img}}" alt="{{user.author}}" class="user-img-small z-depth-1">
+                        <span class="user-name-center">
+                            {{user.author}}
+                        </span>
+                    <span class="btn waves-effect waves-light btn-write" ng-click="sign.writeMsg(user.id)">WRITE</span>
                 </div>
                 <div class="row message-row">
-                    <textarea name="message" maxlength="300">Hi, User Name! </textarea>
+                    <textarea name="message" maxlength="300">Hi, {{user.author}}! </textarea>
                     <span class="btn green waves-effect waves-light btn-send">SEND</span>
                 </div>
             </div>
-
         </div>
+        <!-- Messages -->
         <div class="main-item z-depth-3" id="item-massages">
             <h2 class="item-title">
                 Messages
             </h2>
-
+            <!-- MSG In: -->
             <div class="msg-input">
                 <h4 class="item-title">
                     In:
                 </h4>
-
-                <div class="book-card card">
+                <!-- MSG In: -->
+                <div class="book-card card" ng-repeat="msg in sign.inMsgs">
                     <div class="row user-card-msg">
-                        <img src="../img/user.JPG" alt="User Name" class="user-img-small z-depth-1">
-                        <span class="user-name">
-                            User Name wrote:
-                        </span>
-                        <span class="user-time">
-                            06.02.2015 9:54
-                        </span>
-                        <span class="btn-floating waves-effect waves-light red delete">X</span>
+                        <img src="{{msg.imgSrc}}" alt="{{msg.user}}" class="user-img-small z-depth-1">
+                            <span class="user-name">
+                                {{msg.user}} wrote:
+                            </span>
+                            <span class="user-time">
+                                {{msg.time}}
+                            </span>
                     </div>
                     <div class="row">
                         <div class="book-card-article">
-                            Great Book! Nice to see too cool application like that! My congratulations to developers team!
-                            In my mind I dream about so fine and sexy app! You the Best!
+                            {{msg.msg}}
                         </div>
                     </div>
                 </div>
 
             </div>
-
+            <!-- MSG Out: -->
             <div class="msg-output">
                 <h4 class="item-title">
                     Out:
                 </h4>
-
-                <div class="book-card card">
+                <!-- MSG Out: -->
+                <div class="book-card card" ng-repeat="msg in sign.outMsgs">
                     <div class="row user-card-msg">
-                        <img src="../img/user.JPG" alt="User Name" class="user-img-small z-depth-1">
-                        <span class="user-name">
-                            Send to User Name:
-                        </span>
-                        <span class="user-time">
-                            06.02.2015 9:54
-                        </span>
-                        <span class="btn-floating waves-effect waves-light red delete">X</span>
+                        <img src="{{msg.imgSrc}}" alt="{{msg.user}}" class="user-img-small z-depth-1">
+                            <span class="user-name">
+                                Sent to {{msg.user}}:
+                            </span>
+                            <span class="user-time">
+                                {{msg.time}}
+                            </span>
                     </div>
                     <div class="row">
                         <div class="book-card-article">
-                            Great Book! Nice to see too cool application like that! My congratulations to developers team!
-                            In my mind I dream about so fine and sexy app! You the Best!
+                            {{msg.msg}}
                         </div>
                     </div>
                 </div>
@@ -150,7 +128,7 @@
                 <span class="btn green waves-effect waves-light btn-edit" id="edit">EDIT</span>
             </div>
             <div class="row center-align">
-                <img src="../img/user.JPG" alt="User Name" class="user-img-large z-depth-1">
+                <img src="{{sign.iPhoto}}" alt="{{sign.iUserName}}" class="user-img-large z-depth-1">
             </div>
             <div class="row">
                 <form class="col s12">
@@ -166,19 +144,19 @@
                     <div class="row">
                         <div class="input-field col s6">
                             <i class="mdi-action-account-circle prefix"></i>
-                            <input id="icon_prefix" type="text" class="validate text-color-white">
-                            <label for="icon_prefix">First Name</label>
+                            <input id="icon_prefix" type="text" class="validate text-color-white" ng-model="sign.iFirstName">
+                            <label for="icon_prefix" id="fn">First Name</label>
                         </div>
                         <div class="input-field col s6">
-                            <input id="last_name" type="text" class="validate text-color-white">
-                            <label for="last_name">Last Name</label>
+                            <input id="last_name" type="text" class="validate text-color-white" ng-model="sign.iLastName">
+                            <label for="last_name" id="ln">Last Name</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s6">
                             <i class="mdi-content-markunread prefix"></i>
-                            <input id="email" type="email" class="validate text-color-white">
-                            <label for="email">Email</label>
+                            <input id="email" type="email" class="validate text-color-white" ng-model="sign.iMail">
+                            <label for="email" id="em">Email</label>
                         </div>
                         <div class="input-field col s6">
                             <input id="new-password" type="text" class="validate text-color-white">
@@ -187,16 +165,12 @@
                     </div>
                     <div class="input-field col s12">
                         <i class="mdi-action-stars prefix"></i>
-                        <textarea id="textarea1" class="materialize-textarea text-color-white"></textarea>
-                        <label for="textarea1">About me</label>
+                        <textarea id="textarea1" class="materialize-textarea text-color-white" ng-model="sign.iAbout"></textarea>
+                        <label for="textarea1" id="am">About me</label>
                     </div>
                 </form>
             </div>
 
         </div>
     </div>
-
-    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../vendors/materialize/bin/materialize.js" defer></script>
-</body>
-</html>
+</div>

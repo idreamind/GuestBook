@@ -8,12 +8,13 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body ng-cloak>
+<div id="wrapper" ng-controller="SignIn as sign">
     <nav>
         <div class="nav-wrapper z-depth-1">
             <a href="#" class="brand-logo">Guest Book</a>
         </div>
     </nav>
-    <div id="main-container" ng-controller="SignIn as sign">
+    <div id="main-container">
         <!--GuestBook: -->
         <div class="main-item z-depth-1" id="item-book">
             <h2 class="item-title">
@@ -22,10 +23,10 @@
             <!--Articles: -->
             <div class="book-card card" ng-repeat="item in sign.book">
                 <div class="row book-card-user">
-                    <img src="{{item.img}}" alt="{{item.author}}" class="user-img-small z-depth-1">
-                    <span class="user-name">{{item.author}}</span>
+                    <img src="{{item.imgSrc}}" alt="{{item.user}}" class="user-img-small z-depth-1">
+                    <span class="user-name">{{item.user}}</span>
                     <span class="user-time">{{item.time}}</span>
-                    <span class="count">{{item.count}}</span>
+                    <span class="count">{{item.idArticle}}</span>
                 </div>
                 <div class="row">
                     <div class="book-card-article">{{item.text}}</div>
@@ -84,19 +85,24 @@
                         </div>
                     </div>
                     <div class="row right-align">
-                        <span class="btn red  waves-effect waves-light btn-edit" id="edit1" ng-if="sign.isSignIn==1">SIGN IN</span>
-                        <span class="btn blue waves-effect waves-light btn-edit" id="edit2" ng-if="sign.isSignIn==2">Check IN</span>
+                        <span class="btn red  waves-effect waves-light btn-edit" id="edit1"
+                              ng-click="sign.startHandling()"
+                              ng-if="sign.isSignIn==1">SIGN IN</span>
+                        <span class="btn blue waves-effect waves-light btn-edit" id="edit2"
+                              ng-click="sign.startHandling()"
+                              ng-if="sign.isSignIn==2">Check IN</span>
                     </div>
                 </form>
             </div>
 
         </div>
     </div>
+</div>
 
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="vendors/materialize/bin/materialize.js" defer></script>
 <script src="bower_components/angular/angular.js"></script>
-<script src="js/tempBD.js"></script>
+<!--<script src="js/tempBD.js"></script>-->
 <script src="js/app.js"></script>
 <script src="js/signIn-controller.js"></script>
 

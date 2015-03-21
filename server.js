@@ -17,6 +17,12 @@ var express = require('express'),
 
 var portName = 3000;
 
+var bodyParser = require('body-parser');
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+}));
+
 app.engine( 'html', simple.render );
 app.set('view engine', 'html');
 app.set('views', __dirname + '/server/views');

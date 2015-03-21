@@ -9,12 +9,11 @@
         .module( 'GuestBook' )
         .controller( 'SignIn', SignIn );
 
-    SignIn.$inject = ['$scope', '$http'];
+    SignIn.$inject = ['$scope', '$http', '$compile'];
 
-    function SignIn( $scope, $http ) {
+    function SignIn( $scope, $http, $compile ) {
 
         var sign    = this,
-            tempDB  = new CollectionsDB,
             isOk    = [0, 0],
             stop    = [0, 0],
             validList = {
@@ -25,21 +24,6 @@
                 str:    "It is must be string"
             };
 
-        // Temp DB:
-        sign.book = [ {
-            id: "1",
-            author: "Gregory House",
-            time: "06.02.2015 9:54",
-            text: "Something went wrong...",
-            img: "img/imgUsers/1.jpg",
-            count: "1"
-        } ];
-        sign.users = [ {
-            id: "1",
-            author: "Gregory House",
-            img: "img/imgUsers/1.jpg"
-        } ];
-
         // Init Variables:
         sign.isSignIn = 1;
         sign.forgot   = false;
@@ -47,6 +31,28 @@
         sign.pass     = null;
         sign.errMail  = "";
         sign.errPass  = "";
+
+        // When IN:
+        sign.iBook      = null;
+        sign.iUsers     = null;
+        sign.iMsg       = null;
+        sign.iPhoto     = null;
+        sign.iFirstName = null;
+        sign.iLastName  = null;
+        sign.iMail      = null;
+        sign.iAbout     = null;
+        sign.iId        = null;
+        sign.iUserName  = null;
+
+        // In Collections:
+        sign.inMsgs   = null;
+        sign.outMsgs  = null;
+
+        // Controllers:
+        sign.startHandling = startHandling;
+        sign.signOut       = signOut;
+        sign.writeMsg      = writeMsg;
+        sign.sendMsg       = sendMsg;
 
         // Sub Controllers:
         getDataFromServer();
@@ -89,7 +95,7 @@
                 sign.errMail = "Mail: " + validList.str;
             }
         }
-
+//----------------------------------------------------------------------------------------------------------------------
         // First-level validation pass:
         function validOnFlyPass() {
             if( !stop[1] ) {
@@ -117,19 +123,167 @@
                 sign.errPass = "Password: " + validList.str;
             }
         }
+//----------------------------------------------------------------------------------------------------------------------
+        // Click on button:
+        function startHandling() {
+            if( isOk[0] && isOk[1] ) {
+                var objToSend = {
+                    type: sign.isSignIn,
+                    mail: sign.mail,
+                    pass: sign.pass
+                };
 
+                $http.post( '/in', objToSend )
+                    .success( function(data, status, headers, config) {
+                        console.log( ' Authorization Success: ', data );
 
+                        switch ( data.isIn ) {
+                            case 1:
+                                if( data.hash.length > 10 ) {
+                                    compileData_( data );
+                                }
+                                break;
+                        }
+
+                        console.log( ' Hash: ', localStorage.getItem("GuestBookInSession") );
+
+                    })
+                    .error( function(data, status, headers, config) {
+                        console.log( ' Authorization Error: ', data );
+                    });
+            }
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
+        // Write Msg:
+        function writeMsg( id ) {
+            console.log( 'User Id', id );
+            var $userCard = $('.user-card');
+            if( $userCard.eq( id ).hasClass('user-card-active') ) {
+                $userCard.eq( id ).removeClass('user-card-active user-card-active');
+            } else {
+                $userCard.eq( id ).addClass('user-card-active');
+            }
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
+        // Send Msg:
+        function sendMsg( myId, toId, msg ) {
+
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
+        // Sign Out:
+        function signOut() {
+            console.log( ' --- Sign Out --- ' );
+            localStorage.setItem("GuestBookInSession", null);
+            location.reload();
+        }
+//----------------------------------------------------------------------------------------------------------------------
         // Get Data from Server:
         function getDataFromServer() {
-            $http.get('/in')
+
+            var objToSend = {
+                hash: localStorage.getItem("GuestBookInSession")
+            };
+
+            $http.post('/check', objToSend )
                 .success( function( data, status, headers, config ) {
-                // this callback will be called asynchronously
-                // when the response is available
+                    if( data.isIn == 1 ) {
+                        compileData_( data );
+                    } else {
+                        getPageData_();
+                    }
                 } )
                 .error( function( data, status, headers, config ) {
-
+                    console.log( ' ERROR Get Data from DB: ', data );
                 } );
-            console.log(' Get Data ');
+        }
+
+        function getPageData_( isIn ) {
+            isIn = isIn || false;
+
+            $http.get('/inUsers')
+                .success( function( data, status, headers, config ) {
+                    sign.users = data;
+                } )
+                .error( function( data, status, headers, config ) {
+                    console.log( ' ERROR Get Data from DB: ', data );
+                } );
+
+            $http.get('/inBook')
+                .success( function( data, status, headers, config ) {
+                    sign.book = data;
+                } )
+                .error( function( data, status, headers, config ) {
+                    console.log( ' ERROR Get Data from DB: ', data );
+                } );
+
+            if( isIn ) {
+
+                var objToSend = {
+                    userId: sign.iId
+                };
+
+                $http.post('/messages', objToSend )
+                    .success( function( data ) {
+                        sign.inMsgs   = data.inMsgs;
+                        sign.outMsgs  = data.outMsgs;
+                    } )
+                    .error( function( data ) {
+                        console.log( ' ERROR Get Data from DB: ', data );
+                    } );
+            }
+        }
+
+        function compileData_( data ) {
+            localStorage.setItem("GuestBookInSession", data.hash);
+
+            // Set a New Html:
+            var linkFn  = $compile( data.page),
+                content = linkFn( $scope );
+            angular.element('#wrapper').html( content );
+
+            sign.iPhoto     = data.user.imgSrc;
+            sign.iFirstName = data.user.firstName;
+            sign.iLastName  = data.user.lastName;
+            sign.iMail      = data.user.mail;
+            sign.iAbout     = data.user.about;
+            sign.iId        = data.user.userId;
+
+            if( sign.iFirstName ) {
+                sign.iUserName = (sign.iFirstName + ' ' + sign.iLastName).trim();
+            } else {
+                sign.iUserName = sign.iLastName;
+            }
+
+            // Get Page Data:
+            getPageData_( true );
+
+            // Click imitation by jQuery:
+            if( sign.iFirstName.length > 0 ) {
+                setTimeout( function() {
+                    $("#fn").trigger("click");
+                }, 0 );
+            }
+
+            if( sign.iLastName.length > 0 ) {
+                setTimeout( function() {
+                    $("#ln").trigger("click");
+                }, 500 );
+            }
+
+            if( sign.iMail.length > 0 ) {
+                setTimeout( function() {
+                    $("#em").trigger("click");
+                }, 1000 );
+            }
+
+            if( sign.iAbout.length > 0 ) {
+                setTimeout( function() {
+                    $("#am").trigger("click");
+                }, 1500 );
+            }
         }
 
         return sign;

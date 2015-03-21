@@ -11,7 +11,7 @@ $WHITE: #FFF;
 $LIGHT-GREY: #999;
 $GREY: #666;
 
-// Mixins:
+// MixIns:
 @mixin transition( $t: flex 0.4s ease-in-out ) {
   -webkit-transition: $t;
   transition: $t;
@@ -58,7 +58,7 @@ html, body, ul, li, div {
   margin: 0;
 }
 
-html, body {
+html, body, #wrapper {
   @include hw( 100%, 100% );
   background-color: $YELLOW;
 }
