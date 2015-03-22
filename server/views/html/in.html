@@ -33,14 +33,14 @@
             <!-- I Have to Say -->
             <div class="user-card card user-card-active">
                 <div class="row book-card-user">
-                    <img src="../img/user.JPG" alt="User Name" class="user-img-small z-depth-1">
+                    <img src="{{sign.iPhoto}}" alt="User Name" class="user-img-small z-depth-1">
                         <span class="user-name-center">
                             I have to say:
                         </span>
                 </div>
                 <div class="row message-row">
-                    <textarea name="message" maxlength="300"></textarea>
-                    <span class="btn red waves-effect waves-light btn-send">Add</span>
+                    <textarea name="message" maxlength="300" ng-model="sign.articleToPost"></textarea>
+                    <span class="btn red waves-effect waves-light btn-send" ng-click="sign.postArticle()">Add</span>
                 </div>
             </div>
         </div>

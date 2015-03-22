@@ -23,7 +23,9 @@ function MySQL() {
     sql.getAuthorization     = getAuthorization;
     sql.getHash              = getHash;
     sql.getMsg               = getMsg;
-//-------------------------------------------------------------------------------------------------
+    sql.addArticle           = addArticle;
+
+//----------------------------------------------------------------------------------------------------------------------
     // Simple User-list: img + name, - return this:
     function getSignInUserList( res ) {
         connectionQuery_( res, 'SELECT userId, firstName, lastName, imgSrc FROM users', simpleUsers );
@@ -53,6 +55,9 @@ function MySQL() {
 
         var mail   = req.body.mail,
             pass   = req.body.pass,
+            type   = req.body.type,
+            count  = 0,
+            isNew  = 1,
             resObj = {
                 isIn: -1,
                 page: null,
@@ -66,9 +71,30 @@ function MySQL() {
             pass = pass.replace(/'/g, "").replace(/"/g, "").trim();
 
             if( mail.length > 5 && pass.length > 5 ) {
-                console.log(' ---------------------- Mail & Pass: ', mail, pass);
-                var select = "SELECT userId, firstName, lastName, imgSrc, mail, about, hash FROM users WHERE password = '" + pass + "' AND mail = '" + mail + "'";
-                connectionQuery_( res, select, signIn );
+                console.log(' ---------------------- Mail & Pass: ', mail, pass, type);
+                var select = "SELECT userId, firstName, lastName, imgSrc, mail, about, hash FROM users WHERE password = '" + pass + "' AND mail = '" + mail + "'",
+                    check  = "SELECT * FROM users WHERE mail = '" + mail + "'",
+                    addNew = "INSERT INTO users ( mail, password ) VALUES('" + mail + "', '" + pass + "' )";
+
+                switch ( parseInt( type ) ) {
+                    case 1:
+                        connectionQuery_( res, select, signIn );
+                        break;
+                    case 2:
+                        queryUpdate_( check, checkUser );
+                        if( count == 0 ) {
+                            if ( isNew == 1 ) {
+                                queryUpdate_(addNew);
+                                connectionQuery_(res, select, signIn);
+                            } else {
+                                connectionQuery_(res, select, signIn);
+                            }
+                            count++;
+                        }
+                        break;
+                    default:
+                        res.send( resObj );
+                }
             } else {
                 res.send( resObj );
             }
@@ -76,6 +102,14 @@ function MySQL() {
             res.send( resObj );
         }
 
+        // Get Answer:
+        function checkUser( rows ) {
+            if( rows ) {
+                isNew = 0;
+            }
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
         // This will start only after a sign in:
         function signIn( res, rows ) {
             if( rows.length > 0 ) {
@@ -147,7 +181,7 @@ function MySQL() {
         }
     }
 
-    //----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
     // Get Data in Book:
     function getMsg( req, res ) {
 
@@ -190,6 +224,22 @@ function MySQL() {
         }
     }
 
+//----------------------------------------------------------------------------------------------------------------------
+    // Add new Article:
+    function addArticle( req, res ) {
+
+        var text = req.body.article,
+            time = req.body.time,
+            user = req.body.user,
+            img  = req.body.imgSrc,
+            addStr  = "INSERT INTO guestbook (user, time, imgSrc, text ) VALUES('" + user + "', '" + time + "', '" + img + "', '" + text + "' )";
+
+        if( text && time && user && img ) {
+            queryUpdate_( addStr );
+            getSignInArticleList( res );
+        }
+    }
+
     //------------------------------------------------------------------------------------------------------------------
     // Private:   ------------------------------------------------------------------------------------------------------
 
@@ -198,7 +248,7 @@ function MySQL() {
         pool.getConnection( function( err, connection ) {
             if( err ) {
                 connection.release();
-                res.json({"code" : 100, "status" : "Error in connection database"});
+                console.log({"code" : 100, "status" : "Error in connection database"});
             }
 
             connection.query( queryString, function( err, rows ) {
@@ -237,9 +287,6 @@ function MySQL() {
                     names[i]  = makeName_( rows[i] );
                     images[i] = rows[i].imgSrc;
                 }
-
-                console.log( names );
-                console.log( images );
             }
         }
     }

@@ -11,7 +11,8 @@ var routesList = {
     "/inBook"       : "inBook",
     "/in"           : "signOrCheck",
     "/check"        : "checkHash",
-    "/messages"     : "getMsg"
+    "/messages"     : "getMsg",
+    "/add"          : "addArticle"
 };
 
 module.exports = routesList;

@@ -53,6 +53,7 @@
         sign.signOut       = signOut;
         sign.writeMsg      = writeMsg;
         sign.sendMsg       = sendMsg;
+        sign.postArticle   = postArticle;
 
         // Sub Controllers:
         getDataFromServer();
@@ -144,7 +145,6 @@
                                 }
                                 break;
                         }
-
                         console.log( ' Hash: ', localStorage.getItem("GuestBookInSession") );
 
                     })
@@ -179,6 +179,32 @@
             localStorage.setItem("GuestBookInSession", null);
             location.reload();
         }
+
+//----------------------------------------------------------------------------------------------------------------------
+        // Post Article:
+        function postArticle() {
+
+            if( sign.articleToPost.length > 10 && sign.articleToPost != 'So short...' ) {
+                var objToSend = {
+                    article: sign.articleToPost,
+                    time: timeGenerator(),
+                    user: sign.iUserName,
+                    imgSrc: sign.iPhoto
+                };
+
+                $http.post('/add', objToSend )
+                    .success( function ( data ) {
+                        sign.book = data;
+                    })
+                    .error(function ( data ) {
+                        console.log(' ERROR Get Data from DB: ', data);
+                    });
+
+            } else {
+                sign.articleToPost = 'So short...';
+            }
+        }
+
 //----------------------------------------------------------------------------------------------------------------------
         // Get Data from Server:
         function getDataFromServer() {
@@ -261,29 +287,42 @@
             getPageData_( true );
 
             // Click imitation by jQuery:
-            if( sign.iFirstName.length > 0 ) {
-                setTimeout( function() {
-                    $("#fn").trigger("click");
-                }, 0 );
-            }
+            setTimeout( function() {
+                $("#fn").trigger("click");
+            }, 0 );
 
-            if( sign.iLastName.length > 0 ) {
-                setTimeout( function() {
-                    $("#ln").trigger("click");
-                }, 500 );
-            }
+            setTimeout( function() {
+                $("#ln").trigger("click");
+            }, 500 );
 
-            if( sign.iMail.length > 0 ) {
-                setTimeout( function() {
-                    $("#em").trigger("click");
-                }, 1000 );
-            }
+            setTimeout( function() {
+                $("#em").trigger("click");
+            }, 1000 );
 
-            if( sign.iAbout.length > 0 ) {
-                setTimeout( function() {
-                    $("#am").trigger("click");
-                }, 1500 );
-            }
+            setTimeout( function() {
+                $("#am").trigger("click");
+            }, 1500 );
+        }
+
+ //---------------------------------------------------------------------------------------------------------------------
+        // Time Getter:
+        function timeGenerator() {
+            var dt    = new Date(),
+                day   = dt.getDate() + '',
+                month = ( dt.getMonth() + 1 ) + '',
+                year  = dt.getFullYear(),
+                hour  = dt.getHours() + '',
+                min   = dt.getMinutes() + '',
+                sec   = dt.getSeconds() + '';
+
+            day   = ( day.length > 1 ) ? day : '0' + day;
+            month = ( month.length > 1 ) ? month : '0' + month;
+
+            hour = ( hour.length > 1 ) ? hour : '0' + hour;
+            min  = ( min.length > 1 ) ? min : '0' + min;
+            sec  = ( sec.length > 1 ) ? sec : '0' + sec;
+
+            return day + '.' + month + '.' + year + ' ' + hour + ':' + min + ':' + sec;
         }
 
         return sign;

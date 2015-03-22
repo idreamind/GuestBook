@@ -17,7 +17,7 @@ function Controllers() {
     ctrl.signOrCheck = signOrCheck;
     ctrl.checkHash   = checkHash;
     ctrl.getMsg      = getMsg;
-
+    ctrl.addArticle  = addArticle;
 
     function server( req, res ) {
         res.render( 'index', {} );
@@ -36,21 +36,7 @@ function Controllers() {
     }
 
     function signOrCheck( req, res ) {
-
-        switch ( req.body.type ) {
-            case 1:
-                db.getAuthorization( req, res );
-                break;
-            case 2:
-                break;
-            default:
-                res.send( {
-                    isIn: -1,
-                    page: null,
-                    user: ' You should to check your information ',
-                    hash: null
-                } );
-        }
+        db.getAuthorization( req, res );
     }
 
     function checkHash( req, res ) {
@@ -59,6 +45,10 @@ function Controllers() {
 
     function getMsg( req, res ) {
         db.getMsg( req, res );
+    }
+
+    function addArticle( req, res ) {
+        db.addArticle( req, res );
     }
 
 }

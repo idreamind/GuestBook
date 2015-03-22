@@ -1,7 +1,7 @@
 USE guestbook;
 
 # Get all data from table
--- SELECT * FROM guestbook; 
+SELECT * FROM guestbook; 
 
 # Get any column
 -- SELECT user, time, imgSrc FROM guestbook;
@@ -16,7 +16,7 @@ USE guestbook;
 -- SELECT idArticle, user, time, imgSrc, text FROM guestbook;
 
 # Get All emails:
-SELECT mail, password FROM users;
+-- SELECT mail, password FROM users;
 
 # Select Data by Email:
 -- SELECT password FROM users WHERE mail = 'holmes@gmail.com';
