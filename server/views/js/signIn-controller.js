@@ -9,7 +9,7 @@
         .module( 'GuestBook' )
         .controller( 'SignIn', SignIn );
 
-    SignIn.$inject = ['$scope', '$http', '$compile'];
+    SignIn.$inject = ['$scope', '$http', '$compile', '$sce'];
 
     function SignIn( $scope, $http, $compile ) {
 
@@ -52,8 +52,8 @@
         sign.startHandling = startHandling;
         sign.signOut       = signOut;
         sign.writeMsg      = writeMsg;
-        sign.sendMsg       = sendMsg;
         sign.postArticle   = postArticle;
+        sign.sendMessage   = sendMessage;
 
         // Sub Controllers:
         getDataFromServer();
@@ -72,7 +72,6 @@
             var str = sign.mail;
             if( typeof str === "string" ) {
                 var arrQ = str.match(/[\",\']/ig) || [];
-                console.log( "arrQ: " + arrQ );
                 if( !arrQ.length ) {
                     if (str.length > 6) {
                         var arrM = str.match(/[@,.]/ig) || [];
@@ -167,12 +166,6 @@
         }
 
 //----------------------------------------------------------------------------------------------------------------------
-        // Send Msg:
-        function sendMsg( myId, toId, msg ) {
-
-        }
-
-//----------------------------------------------------------------------------------------------------------------------
         // Sign Out:
         function signOut() {
             console.log( ' --- Sign Out --- ' );
@@ -206,6 +199,33 @@
         }
 
 //----------------------------------------------------------------------------------------------------------------------
+        // Send Message:
+        function sendMessage( idToSend ) {
+            var objToSend = {
+                    idTo:   idToSend,
+                    idFrom: sign.iId,
+                    time:   timeGenerator(),
+                    text:   $('.message-area').eq( idToSend - 1 ).val()
+                    },
+                arrQ = objToSend.text.match(/[\"\']/ig) || [];
+
+            console.log( objToSend, objToSend.text.length, arrQ );
+
+            if( objToSend.text.length > 0 && objToSend.text.length < 1000 && !arrQ.length ) {
+                $http.post('/send', objToSend)
+                    .success(function (data) {
+                        console.log( " Data !!!: ", data );
+                        if (data == '1') {
+                            getPageData_(true);
+                        }
+                    })
+                    .error(function (data) {
+                        console.log(' ERROR Sending message: ', data);
+                    });
+            }
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
         // Get Data from Server:
         function getDataFromServer() {
 
@@ -225,6 +245,8 @@
                     console.log( ' ERROR Get Data from DB: ', data );
                 } );
         }
+
+//----------------------------------------------------------------------------------------------------------------------
 
         function getPageData_( isIn ) {
             isIn = isIn || false;
@@ -253,6 +275,7 @@
 
                 $http.post('/messages', objToSend )
                     .success( function( data ) {
+
                         sign.inMsgs   = data.inMsgs;
                         sign.outMsgs  = data.outMsgs;
                     } )
@@ -260,7 +283,11 @@
                         console.log( ' ERROR Get Data from DB: ', data );
                     } );
             }
+
+            //$scope.$apply();
         }
+
+//----------------------------------------------------------------------------------------------------------------------
 
         function compileData_( data ) {
             localStorage.setItem("GuestBookInSession", data.hash);

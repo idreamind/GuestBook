@@ -59,8 +59,8 @@
                     <span class="btn waves-effect waves-light btn-write" ng-click="sign.writeMsg(user.id)">WRITE</span>
                 </div>
                 <div class="row message-row">
-                    <textarea name="message" maxlength="300">Hi, {{user.author}}! </textarea>
-                    <span class="btn green waves-effect waves-light btn-send">SEND</span>
+                    <textarea name="message" maxlength="300" class="message-area">Hi, {{user.author}}! </textarea>
+                    <span class="btn green waves-effect waves-light btn-send" ng-click="sign.sendMessage(user.id)">SEND</span>
                 </div>
             </div>
         </div>
@@ -86,9 +86,7 @@
                             </span>
                     </div>
                     <div class="row">
-                        <div class="book-card-article">
-                            {{msg.msg}}
-                        </div>
+                        <div class="book-card-article" ng-bind-html="msg.msg"></div>
                     </div>
                 </div>
 
@@ -110,9 +108,7 @@
                             </span>
                     </div>
                     <div class="row">
-                        <div class="book-card-article">
-                            {{msg.msg}}
-                        </div>
+                        <div class="book-card-article" ng-bind-html="msg.msg"></div>
                     </div>
                 </div>
 

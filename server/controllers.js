@@ -18,6 +18,7 @@ function Controllers() {
     ctrl.checkHash   = checkHash;
     ctrl.getMsg      = getMsg;
     ctrl.addArticle  = addArticle;
+    ctrl.sendMessage = sendMessage;
 
     function server( req, res ) {
         res.render( 'index', {} );
@@ -51,6 +52,9 @@ function Controllers() {
         db.addArticle( req, res );
     }
 
+    function sendMessage( req, res ) {
+        db.sendMessage( req, res );
+    }
 }
 
 module.exports = Controllers;

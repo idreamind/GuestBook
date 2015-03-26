@@ -24,6 +24,7 @@ function MySQL() {
     sql.getHash              = getHash;
     sql.getMsg               = getMsg;
     sql.addArticle           = addArticle;
+    sql.sendMessage          = sendMessage;
 
 //----------------------------------------------------------------------------------------------------------------------
     // Simple User-list: img + name, - return this:
@@ -237,6 +238,25 @@ function MySQL() {
         if( text && time && user && img ) {
             queryUpdate_( addStr );
             getSignInArticleList( res );
+        } else {
+            res.send( "ERROR to add an article" );
+        }
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
+    // Send a new message:
+    function sendMessage( req, res ) {
+        var fromId  = req.body.idFrom,
+            toId    = req.body.idTo,
+            time    = req.body.time,
+            msg     = req.body.text,
+            addStr  = "INSERT INTO guestmsg ( fromId, toId, time, msg ) VALUES('" + fromId + "', '" + toId + "', '" + time + "', '" + msg + "' )";
+
+        if( fromId && toId && time && msg ) {
+            queryUpdate_( addStr );
+            res.send( '1' );
+        } else {
+            res.send( "ERROR to send a message" );
         }
     }
 

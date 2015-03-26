@@ -2,10 +2,10 @@
  * Created by dreamind on 22.02.2015.
  */
 (function() {
-    'use strict'
+    'use strict';
 
     angular
-        .module( 'GuestBook', [] );
+        .module( 'GuestBook', [ 'ngSanitize' ] );
 
 
 })();

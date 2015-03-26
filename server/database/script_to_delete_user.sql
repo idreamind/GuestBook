@@ -1,2 +1,4 @@
+USE guestbook;  # use this DB
 -- DELETE FROM guestbook.users WHERE userId > 4;
-SELECT * FROM guestbook.users;
+-- ALTER TABLE users AUTO_INCREMENT = 1;
+SELECT * FROM users;
