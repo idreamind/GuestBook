@@ -13,7 +13,9 @@ var routesList = {
     "/check"        : "checkHash",
     "/messages"     : "getMsg",
     "/add"          : "addArticle",
-    "/send"         : "sendMessage"
+    "/send"         : "sendMessage",
+    "/update"       : "updateProfile",
+    "/image"        : "uploadImage"
 };
 
 module.exports = routesList;

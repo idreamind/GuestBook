@@ -10,15 +10,17 @@ function Controllers() {
         MySQL  = require('./mysql'),
         db     = new MySQL();
 
-    ctrl.server      = server;
-    ctrl.inUsers     = inUsers;
-    ctrl.inBook      = inBook;
-    ctrl.inMails     = inMails;
-    ctrl.signOrCheck = signOrCheck;
-    ctrl.checkHash   = checkHash;
-    ctrl.getMsg      = getMsg;
-    ctrl.addArticle  = addArticle;
-    ctrl.sendMessage = sendMessage;
+    ctrl.server         = server;
+    ctrl.inUsers        = inUsers;
+    ctrl.inBook         = inBook;
+    ctrl.inMails        = inMails;
+    ctrl.signOrCheck    = signOrCheck;
+    ctrl.checkHash      = checkHash;
+    ctrl.getMsg         = getMsg;
+    ctrl.addArticle     = addArticle;
+    ctrl.sendMessage    = sendMessage;
+    ctrl.updateProfile  = updateProfile;
+    ctrl.uploadImage    = uploadImage;
 
     function server( req, res ) {
         res.render( 'index', {} );
@@ -54,6 +56,14 @@ function Controllers() {
 
     function sendMessage( req, res ) {
         db.sendMessage( req, res );
+    }
+
+    function updateProfile( req, res ) {
+        db.updateProfile( req, res );
+    }
+
+    function uploadImage( req, res ) {
+        db.uploadImage( req, res );
     }
 }
 

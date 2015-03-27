@@ -5,7 +5,8 @@
     'use strict';
 
     angular
-        .module( 'GuestBook', [ 'ngSanitize' ] );
-
+        .module( 'GuestBook',
+            [ 'ngSanitize',
+            'angularFileUpload'] );
 
 })();

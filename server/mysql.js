@@ -25,6 +25,8 @@ function MySQL() {
     sql.getMsg               = getMsg;
     sql.addArticle           = addArticle;
     sql.sendMessage          = sendMessage;
+    sql.updateProfile        = updateProfile;
+    sql.uploadImage          = uploadImage;
 
 //----------------------------------------------------------------------------------------------------------------------
     // Simple User-list: img + name, - return this:
@@ -217,8 +219,6 @@ function MySQL() {
                 } );
 
                 resObj.outMsgs = rows;
-
-                console.log( resObj );
                 res.send( resObj );
             }
 
@@ -258,6 +258,65 @@ function MySQL() {
         } else {
             res.send( "ERROR to send a message" );
         }
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
+    // Update Profile:
+    function updateProfile( req, res ) {
+        var type    = req.body.type     || '',
+            user    = req.body.user     || '',
+            imgLink = req.body.imgLink  || '',
+            ftName  = req.body.ftName   || '',
+            sdName  = req.body.sdName   || '',
+            email   = req.body.email    || '',
+            pass    = req.body.pass     || '',
+            about   = req.body.about    || '',
+            updateStr = '';
+
+        if( imgLink.length > 10 ) {
+            updateStr = "UPDATE users SET imgSrc = '" + imgLink + "' WHERE userId = '" + user + "'";
+            queryUpdate_( updateStr );
+        }
+
+        if( ftName.length > 0 ) {
+            updateStr = "UPDATE users SET firstName = '" + ftName + "' WHERE userId = '" + user + "'";
+            queryUpdate_( updateStr );
+        }
+
+        if( sdName.length > 0 ) {
+            updateStr = "UPDATE users SET lastName = '" + sdName + "' WHERE userId = '" + user + "'";
+            queryUpdate_( updateStr );
+        }
+
+        if( email.length > 6 ) {
+            updateStr = "UPDATE users SET mail = '" + email + "' WHERE userId = '" + user + "'";
+            queryUpdate_( updateStr );
+        }
+
+        if( pass.length > 6 ) {
+            updateStr = "UPDATE users SET password = '" + pass + "' WHERE userId = '" + user + "'";
+            queryUpdate_( updateStr );
+        }
+
+        if( about.length > 0 ) {
+            updateStr = "UPDATE users SET about = '" + about + "' WHERE userId = '" + user + "'";
+            queryUpdate_( updateStr );
+        }
+
+        res.send( '1' );
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
+    // Upload Image:
+    function uploadImage( req, res ) {
+
+        var file      = "img/imgUsers/" + req.files.file.name,
+            user      = JSON.parse(req.body.data).user,
+            updateStr = "UPDATE users SET imgSrc = '" + file + "' WHERE userId = '" + user + "'";
+
+        queryUpdate_( updateStr );
+
+        res.send( '1' );
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -315,7 +374,7 @@ function MySQL() {
 //----------------------------------------------------------------------------------------------------------------------
     // Function to Make a smt. like a hash:
     function hashGenerator_( mail ) {
-        var rand = Math.random() * ( 9999998 - 1000001 ) + 1000001 + '',
+        var rand = passwordGenerator_() + '',
             date = (new Date()).getTime();
         return mail + '&' + rand + '&' + date;
     }
@@ -339,6 +398,12 @@ function MySQL() {
                 process( rows );
             }
         }
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
+    // Password Generator:
+    function passwordGenerator_() {
+        return Math.random() * ( 9999998 - 1000001 ) + 1000001;
     }
 
     return sql;

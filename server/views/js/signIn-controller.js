@@ -9,9 +9,9 @@
         .module( 'GuestBook' )
         .controller( 'SignIn', SignIn );
 
-    SignIn.$inject = ['$scope', '$http', '$compile', '$sce'];
+    SignIn.$inject = ['$scope', '$http', '$compile', '$sce', '$upload' ];
 
-    function SignIn( $scope, $http, $compile ) {
+    function SignIn( $scope, $http, $compile, $sce, $upload ) {
 
         var sign    = this,
             isOk    = [0, 0],
@@ -25,12 +25,13 @@
             };
 
         // Init Variables:
-        sign.isSignIn = 1;
-        sign.forgot   = false;
-        sign.mail     = null;
-        sign.pass     = null;
-        sign.errMail  = "";
-        sign.errPass  = "";
+        sign.isSignIn   = 1;
+        sign.isLinkImg  = 1;
+        sign.forgot     = false;
+        sign.mail       = null;
+        sign.pass       = null;
+        sign.errMail    = "";
+        sign.errPass    = "";
 
         // When IN:
         sign.iBook      = null;
@@ -43,6 +44,9 @@
         sign.iAbout     = null;
         sign.iId        = null;
         sign.iUserName  = null;
+        sign.iPass      = null;
+        sign.newImgLink = null;
+        sign.newImage   = null;
 
         // In Collections:
         sign.inMsgs   = null;
@@ -54,6 +58,8 @@
         sign.writeMsg      = writeMsg;
         sign.postArticle   = postArticle;
         sign.sendMessage   = sendMessage;
+        sign.updateProfile = updateProfile;
+        sign.onFileSelect  = onFileSelect;
 
         // Sub Controllers:
         getDataFromServer();
@@ -199,6 +205,39 @@
         }
 
 //----------------------------------------------------------------------------------------------------------------------
+        // Update Profile:
+        function updateProfile() {
+            var objToSend = {
+                type:       sign.isLinkImg,
+                user:       sign.iId,
+                imgLink:    sign.newImgLink,
+                ftName:     sign.iFirstName || '',
+                sdName:     sign.iLastName  || '',
+                email:      sign.iMail,
+                pass:       sign.iPass,
+                about:      sign.iAbout
+            };
+
+            objToSend.ftName = objToSend.ftName.trim();
+            objToSend.sdName = objToSend.sdName.trim();
+
+            if( objToSend.ftName.length > 1 || objToSend.sdName.length > 1 ) {
+                $http.post('/update', objToSend )
+                    .success( function ( data ) {
+                        if( data == '1' ) {
+                            location.reload();
+                        }
+                    })
+                    .error(function ( data ) {
+                        console.log(' ERROR Update Data on Server: ', data);
+                    });
+            }
+
+            console.log( objToSend );
+
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
         // Send Message:
         function sendMessage( idToSend ) {
             var objToSend = {
@@ -222,6 +261,28 @@
                     .error(function (data) {
                         console.log(' ERROR Sending message: ', data);
                     });
+            }
+        }
+
+//----------------------------------------------------------------------------------------------------------------------
+        function onFileSelect($files) {
+            if ($files.length > 0) {
+                $upload.upload({
+                    url: '/image',
+                    file: $files,
+                    data: {
+                        user: sign.iId
+                    },
+                    progress: function ( err ) {
+                        console.log(' ERROR Update Data on Server: ', err);
+                    }
+                }).then(function (data, status, headers, config) {
+                    // file is uploaded successfully
+                    if( data.data == '1' ) {
+                        location.reload();
+                    }
+                    console.log( data );
+                });
             }
         }
 

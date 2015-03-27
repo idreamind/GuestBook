@@ -119,21 +119,34 @@
             <h2 class="item-title">
                 Profile
             </h2>
-
+            <!-- Button Save  -->
             <div class="row right-align">
-                <span class="btn green waves-effect waves-light btn-edit" id="edit">EDIT</span>
+                <span class="btn green waves-effect waves-light btn-edit" id="edit" ng-click="sign.updateProfile()">SAVE</span>
             </div>
             <div class="row center-align">
                 <img src="{{sign.iPhoto}}" alt="{{sign.iUserName}}" class="user-img-large z-depth-1">
             </div>
             <div class="row">
-                <form class="col s12">
+                <div class="col s12">
+                    <div class="row center-align">
+                        <input name="group21" type="radio" id="test21" value="1" ng-model="sign.isLinkImg" checked>
+                        <label for="test21">Image Link</label>
+                        <input name="group22" type="radio" id="test22" value="2" ng-model="sign.isLinkImg">
+                        <label for="test22">Image File</label>
+                    </div>
                     <div class="row">
-                        <div class="file-field input-field col s12">
-                            <input class="file-path validate text-color-white" type="text"/>
-                            <div class="btn waves-effect waves-light">
-                                <span>file</span>
-                                <input type="file" />
+                        <div class="input-field col s12 center-align" ng-if="sign.isLinkImg==1">
+                            <i class="mdi-content-link prefix"></i>
+                            <input id="new-img" class="validate text-color-white" type="text" ng-model="sign.newImgLink">
+                            <label for="new-img">Paste Link:</label>
+                        </div>
+                        <div class="col s12" ng-if="sign.isLinkImg==2">
+                            <div class="file-field input-field">
+                                <input class="file-path validate" type="text"/>
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-file-select="sign.onFileSelect($files)">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -155,7 +168,7 @@
                             <label for="email" id="em">Email</label>
                         </div>
                         <div class="input-field col s6">
-                            <input id="new-password" type="text" class="validate text-color-white">
+                            <input id="new-password" type="text" class="validate text-color-white" ng-model="sign.iPass">
                             <label for="new-password">New Password</label>
                         </div>
                     </div>
@@ -164,7 +177,7 @@
                         <textarea id="textarea1" class="materialize-textarea text-color-white" ng-model="sign.iAbout"></textarea>
                         <label for="textarea1" id="am">About me</label>
                     </div>
-                </form>
+                </div>
             </div>
 
         </div>
