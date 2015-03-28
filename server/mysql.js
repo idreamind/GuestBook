@@ -3,9 +3,9 @@
  */
 'use strict';
 
-var mysql = require('mysql'),
-    fs    = require('fs'),
-    pool  = mysql.createPool({
+var mysql   = require('mysql'),
+    fs      = require('fs'),
+    pool    = mysql.createPool({
         connectionLimit : 100,
         host     : 'localhost',
         user     : 'root',
@@ -27,6 +27,7 @@ function MySQL() {
     sql.sendMessage          = sendMessage;
     sql.updateProfile        = updateProfile;
     sql.uploadImage          = uploadImage;
+    sql.forgotPassword       = forgotPassword;
 
 //----------------------------------------------------------------------------------------------------------------------
     // Simple User-list: img + name, - return this:
@@ -74,7 +75,6 @@ function MySQL() {
             pass = pass.replace(/'/g, "").replace(/"/g, "").trim();
 
             if( mail.length > 5 && pass.length > 5 ) {
-                console.log(' ---------------------- Mail & Pass: ', mail, pass, type);
                 var select = "SELECT userId, firstName, lastName, imgSrc, mail, about, hash FROM users WHERE password = '" + pass + "' AND mail = '" + mail + "'",
                     check  = "SELECT * FROM users WHERE mail = '" + mail + "'",
                     addNew = "INSERT INTO users ( mail, password ) VALUES('" + mail + "', '" + pass + "' )";
@@ -88,6 +88,7 @@ function MySQL() {
                         if( count == 0 ) {
                             if ( isNew == 1 ) {
                                 queryUpdate_(addNew);
+                                console.log(' ---------------------- Add Nev Mail & Pass: ', mail, pass );
                                 connectionQuery_(res, select, signIn);
                             } else {
                                 connectionQuery_(res, select, signIn);
@@ -129,6 +130,7 @@ function MySQL() {
                 fs.readFile( 'server/views/html/in.html', function( err, content ) {
                     if( err ) {
                         console.log( 'File Operation', err );
+                        resObj.user = ' Can not load Application ';
                         res.send( resObj );
                     } else {
                         res.send({
@@ -140,6 +142,7 @@ function MySQL() {
                     }
                 } );
             } else {
+                resObj.user = ' You should to check your information 2';
                 res.send( resObj );
             }
         }
@@ -317,6 +320,27 @@ function MySQL() {
         queryUpdate_( updateStr );
 
         res.send( '1' );
+    }
+
+//----------------------------------------------------------------------------------------------------------------------
+    // Set New Password:
+    function forgotPassword( req, res ) {
+        var mail        = req.body.mail,
+            pass        = req.body.pass,
+            queryString = "SELECT userId FROM users WHERE mail = '" + mail + "'",
+            updateStr   = "UPDATE users SET password = '" + pass + "' WHERE mail = '" + mail + "'";
+
+        // Check Mail:
+        connectionQuery_( res, queryString, mailHandler );
+
+        function mailHandler( res, rows ) {
+            if( rows.length > 0 ) {
+                queryUpdate_( updateStr );
+                res.send( 'New Password Has Send ' );
+            } else {
+                res.send( 'No such user: ' + mail );
+            }
+        }
     }
 
     //------------------------------------------------------------------------------------------------------------------

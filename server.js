@@ -5,6 +5,8 @@
 
 var express = require('express'),
     http    = require('http'),
+    multer  = require('multer'),
+    mailer  = require('express-mailer'),
     app     = express(),
     Logger  = require('./server/logger'),
     logger  = new Logger(),
@@ -13,13 +15,29 @@ var express = require('express'),
     Simple  = require('./server/simple'),
     simple  = new Simple(),
     Helper  = require('./server/helpers'),
-    helper  = new Helper();
+    helper  = new Helper(),
+    MySQL  = require('./server/mysql'),
+    db     = new MySQL();
+
+mailer.extend( app, {
+    from: 'no-reply@example.com',
+    host: 'smtp.gmail.com', // hostname
+    secureConnection: true, // use SSL
+    port: 465, // port for secure SMTP
+    transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
+    auth: {
+        user: 'kos.voit@gmail.com',
+        pass: 'NJM52691612918g$'
+    }
+} );
 
 var portName = 3000;
 
 var bodyParser = require('body-parser');
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+
+app.use( multer({ dest: './server/views/img/imgUsers'}) );
+app.use( bodyParser.json() );        // to support JSON-encoded bodies
+app.use( bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
@@ -37,6 +55,28 @@ app.use( function(req, res, next ) {
 app.use( function( req, res, next ) {
     router.router( req, res, next );
 } );
+
+// Send Email with New Password:
+app.post('/forgot', function (req, res, next) {
+    var mail        = req.body.mail,
+        newPass     = Math.floor( Math.random() * ( 9999998 - 1000001 ) + 1000001 );
+
+    app.mailer.send('email', {
+        to: mail,                                 // REQUIRED. This can be a comma delimited string just like a normal email to field.
+        subject: 'GuestBook App. New password:',  // REQUIRED.
+        pass:  newPass
+    }, function (err) {
+        if( err ) {
+            // Handle error
+            console.log(err);
+            res.send( 'There was an error sending the e-mail' );
+            return;
+        }
+        // Update DB:
+        req.body.pass = newPass;
+        db.forgotPassword( req, res );
+    });
+});
 
 // Send Static Content:
 app.use( express.static(__dirname) );

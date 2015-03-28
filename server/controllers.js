@@ -65,6 +65,7 @@ function Controllers() {
     function uploadImage( req, res ) {
         db.uploadImage( req, res );
     }
+
 }
 
 module.exports = Controllers;

@@ -139,23 +139,34 @@
                     pass: sign.pass
                 };
 
-                $http.post( '/in', objToSend )
-                    .success( function(data, status, headers, config) {
-                        console.log( ' Authorization Success: ', data );
+                sign.errMail = '';
+                sign.errPass = '';
 
-                        switch ( data.isIn ) {
-                            case 1:
-                                if( data.hash.length > 10 ) {
-                                    compileData_( data );
-                                }
-                                break;
-                        }
-                        console.log( ' Hash: ', localStorage.getItem("GuestBookInSession") );
+                if( sign.forgot ) {
+                    $http.post('/forgot', objToSend)
+                        .success(function ( data ) {
+                            sign.errPass = data;
+                        })
+                        .error(function ( data ) {
+                            console.log(' Authorization Error: ', data);
+                        });
+                } else {
+                    $http.post('/in', objToSend)
+                        .success(function (data, status, headers, config) {
+                            console.log(' Authorization Success: ', data);
 
-                    })
-                    .error( function(data, status, headers, config) {
-                        console.log( ' Authorization Error: ', data );
-                    });
+                            switch (data.isIn) {
+                                case 1:
+                                    if (data.hash.length > 10) {
+                                        compileData_(data);
+                                    }
+                                    break;
+                            }
+                        })
+                        .error(function (data, status, headers, config) {
+                            console.log(' Authorization Error: ', data);
+                        });
+                }
             }
         }
 
@@ -344,8 +355,6 @@
                         console.log( ' ERROR Get Data from DB: ', data );
                     } );
             }
-
-            //$scope.$apply();
         }
 
 //----------------------------------------------------------------------------------------------------------------------

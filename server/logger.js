@@ -22,8 +22,8 @@ function Logger() {
             logArr      = [
                 req.hostname,
                 dateTimeStr,
-                req.path,
-                helper.pathType( req.path )
+                helper.pathType( req.path ),
+                req.path
             ];
 
         var logStr = logArr.reduce( createStr_, "" );

@@ -19,7 +19,7 @@ function Router() {
         var handler = match.getHandler( req.path );
 
         if( handler && ctrl.hasOwnProperty(handler) ) {
-            ctrl[handler](req, res);
+            ctrl[handler]( req, res );
         } else {
             next();
         }
