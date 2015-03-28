@@ -52,8 +52,8 @@
             <!--Users List: -->
             <div class="user-card card" ng-repeat="user in sign.users"> <!-- THIS -->
                 <div class="row user-card-user">
-                    <img src="{{user.img}}" alt="{{user.author}}" class="user-img-small z-depth-1">
-                        <span class="user-name-center">
+                    <img src="{{user.img}}" alt="{{user.author}}" title="{{user.author}}" class="user-img-small z-depth-1">
+                        <span class="user-name-center" title="{{user.about}}">
                             {{user.author}}
                         </span>
                     <span class="btn waves-effect waves-light btn-write" ng-click="sign.writeMsg(user.id)">WRITE</span>
@@ -138,7 +138,7 @@
                         <div class="input-field col s12 center-align" ng-if="sign.isLinkImg==1">
                             <i class="mdi-content-link prefix"></i>
                             <input id="new-img" class="validate text-color-white" type="text" ng-model="sign.newImgLink">
-                            <label for="new-img">Paste Link:</label>
+                            <label for="new-img">New Image Link:</label>
                         </div>
                         <div class="col s12" ng-if="sign.isLinkImg==2">
                             <div class="file-field input-field">

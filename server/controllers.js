@@ -5,8 +5,6 @@
 
 function Controllers() {
     var ctrl   = this,
-        Helper = require('./helpers'),
-        helper = new Helper(),
         MySQL  = require('./mysql'),
         db     = new MySQL();
 

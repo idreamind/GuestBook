@@ -5,6 +5,8 @@
 
 var mysql   = require('mysql'),
     fs      = require('fs'),
+    Helper  = require('./helpers'),
+    help    = new Helper(),
     pool    = mysql.createPool({
         connectionLimit : 100,
         host     : 'localhost',
@@ -32,12 +34,13 @@ function MySQL() {
 //----------------------------------------------------------------------------------------------------------------------
     // Simple User-list: img + name, - return this:
     function getSignInUserList( res ) {
-        connectionQuery_( res, 'SELECT userId, firstName, lastName, imgSrc FROM users', simpleUsers );
+        connectionQuery_( res, 'SELECT userId, firstName, lastName, imgSrc, about FROM users', simpleUsers );
 
         function simpleUsers( res, rows ) {
             res.json( rows.map(function (el) {
                 return {
                     author: makeName_(el),
+                    about: el.about,
                     img: el.imgSrc,
                     id: el.userId
                 };
@@ -88,7 +91,7 @@ function MySQL() {
                         if( count == 0 ) {
                             if ( isNew == 1 ) {
                                 queryUpdate_(addNew);
-                                console.log(' ---------------------- Add Nev Mail & Pass: ', mail, pass );
+                                console.log(' ---------------------- Add Nev Mail & Pass: ', mail, pass, log.getCurrentTime() );
                                 connectionQuery_(res, select, signIn);
                             } else {
                                 connectionQuery_(res, select, signIn);

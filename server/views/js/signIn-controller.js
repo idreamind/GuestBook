@@ -28,6 +28,7 @@
         sign.isSignIn   = 1;
         sign.isLinkImg  = 1;
         sign.forgot     = false;
+        sign.isIn       = false;
         sign.mail       = null;
         sign.pass       = null;
         sign.errMail    = "";
@@ -63,6 +64,10 @@
 
         // Sub Controllers:
         getDataFromServer();
+        // Take Data every 5 minutes:
+        setInterval( function() {
+            getPageData_( sign.isIn );
+        }, 300000 );
 
         // Watchers:
         $scope.$watch( 'sign.mail', validOnFlyMail );
@@ -167,6 +172,8 @@
                             console.log(' Authorization Error: ', data);
                         });
                 }
+                sign.forgot   = false;
+                sign.isSignIn = 1;
             }
         }
 
@@ -322,6 +329,7 @@
 
         function getPageData_( isIn ) {
             isIn = isIn || false;
+            sign.isIn = isIn;
 
             $http.get('/inUsers')
                 .success( function( data, status, headers, config ) {
