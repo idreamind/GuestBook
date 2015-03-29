@@ -48,6 +48,7 @@
         sign.iPass      = null;
         sign.newImgLink = null;
         sign.newImage   = null;
+        sign.iStore     = null;
 
         // In Collections:
         sign.inMsgs   = null;
@@ -344,7 +345,6 @@
 
                 $http.post('/messages', objToSend )
                     .success( function( data ) {
-
                         sign.inMsgs   = data.inMsgs;
                         sign.outMsgs  = data.outMsgs;
                     } )
@@ -357,7 +357,10 @@
 //----------------------------------------------------------------------------------------------------------------------
 
         function compileData_( data ) {
-            localStorage.setItem("GuestBookInSession", data.hash);
+
+            sign.iStore = data.store || "GuestBookInSession";
+            localStorage.setItem( "GuestBookInSession", data.hash );
+            //console.log( data );
 
             // Set a New Html:
             var linkFn  = $compile( data.page),

@@ -1,7 +1,7 @@
 USE guestbook;
 
 # Get all data from table
-SELECT * FROM guestbook; 
+SELECT * FROM users; 
 
 # Get any column
 -- SELECT user, time, imgSrc FROM guestbook;

@@ -70,8 +70,10 @@ function MySQL() {
                 isIn: -1,
                 page: null,
                 user: ' You should to check your information ',
-                hash: null
-            };
+                hash: null,
+                store: null
+            },
+            store = storageGenerator_();
 
         mail = repQuotes_( mail );
         pass = repQuotes_( pass );
@@ -79,9 +81,9 @@ function MySQL() {
         if( typeof mail == "string" && typeof pass == "string" ) {
             if( mail.length > 5 && pass.length > 5 ) {
 
-                var select = "SELECT userId, firstName, lastName, imgSrc, mail, about, hash FROM users WHERE password = '" + pass + "' AND mail = '" + mail + "'",
+                var select = "SELECT userId, firstName, lastName, imgSrc, mail, about, hash, dataStorage FROM users WHERE password = '" + pass + "' AND mail = '" + mail + "'",
                     check  = "SELECT * FROM users WHERE mail = '" + mail + "'",
-                    addNew = "INSERT INTO users ( mail, password ) VALUES('" + mail + "', '" + pass + "' )";
+                    addNew = "INSERT INTO users ( mail, password, dataStorage ) VALUES('" + mail + "', '" + pass + "', '" + store + "' )";
 
                 switch ( parseInt( type ) ) {
                     case 1:
@@ -92,7 +94,7 @@ function MySQL() {
                         if( count == 0 ) {
                             if ( isNew == 1 ) {
                                 queryUpdate_(addNew);
-                                console.log(' ---------------------- Add Nev Mail & Pass: ', mail, pass, log.getCurrentTime() );
+                                console.log(' ---------------------- Add Nev Mail & Pass: ', mail, pass, help.getCurrentTime() );
                                 connectionQuery_(res, select, signIn);
                             } else {
                                 connectionQuery_(res, select, signIn);
@@ -141,7 +143,8 @@ function MySQL() {
                             isIn: 1,
                             page: content.toString(),
                             user: row,
-                            hash: hash
+                            hash: hash,
+                            store: row.dataStorage
                         });
                     }
                 } );
@@ -418,6 +421,13 @@ function MySQL() {
         return str.replace(/'/g, '\\\'').replace(/"/g,'\\\"').replace(/;/g, '').replace(/select/gi,'').replace(/union/gi,'').trim();
     }
 
+    function deleteQuotes_( str ) {
+        if( typeof str != "string" ) {
+            return null;
+        }
+        return str.replace(/'/g,'').replace(/"/g,'').trim();
+    }
+
     // Is Number:
     function isNumber_( str ) {
         var number = parseInt( str );
@@ -467,6 +477,60 @@ function MySQL() {
     // Password Generator:
     function passwordGenerator_() {
         return Math.random() * ( 9999998 - 1000001 ) + 1000001;
+    }
+
+    // Storage Generator:
+    function storageGenerator_() {
+
+        var str = '';
+        while( str.length < 20 ) {
+            var r = Math.floor(Math.random() * ( 20 - 1 ) + 1),
+                n = Math.floor(Math.random() * ( 10 - 1 ) + 1),
+                l = null;
+            switch ( r ) {
+                case 1: l = 'a';
+                    break;
+                case 2: l = 'b';
+                    break;
+                case 3: l = 'c';
+                    break;
+                case 4: l = 'd';
+                    break;
+                case 5: l = 'e';
+                    break;
+                case 6: l = 'f';
+                    break;
+                case 7: l = 'j';
+                    break;
+                case 8: l = 'i';
+                    break;
+                case 9: l = 'k';
+                    break;
+                case 10: l = 'l';
+                    break;
+                case 11: l = 'm';
+                    break;
+                case 12: l = 'n';
+                    break;
+                case 13: l = 'o';
+                    break;
+                case 14: l = 'p';
+                    break;
+                case 15: l = 'q';
+                    break;
+                case 16: l = 'r';
+                    break;
+                case 17: l = 's';
+                    break;
+                case 18: l = 't';
+                    break;
+                case 19: l = 'u';
+                    break;
+                default: l = 'z';
+            }
+            str += l + n;
+        }
+        return deleteQuotes_( str );
     }
 
     return sql;
