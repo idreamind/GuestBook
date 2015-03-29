@@ -158,8 +158,6 @@
                 } else {
                     $http.post('/in', objToSend)
                         .success(function (data, status, headers, config) {
-                            console.log(' Authorization Success: ', data);
-
                             switch (data.isIn) {
                                 case 1:
                                     if (data.hash.length > 10) {
@@ -180,7 +178,6 @@
 //----------------------------------------------------------------------------------------------------------------------
         // Write Msg:
         function writeMsg( id ) {
-            console.log( 'User Id', id );
             var $userCard = $('.user-card');
             if( $userCard.eq( id ).hasClass('user-card-active') ) {
                 $userCard.eq( id ).removeClass('user-card-active user-card-active');
@@ -250,9 +247,6 @@
                         console.log(' ERROR Update Data on Server: ', data);
                     });
             }
-
-            console.log( objToSend );
-
         }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -263,15 +257,11 @@
                     idFrom: sign.iId,
                     time:   timeGenerator(),
                     text:   $('.message-area').eq( idToSend - 1 ).val()
-                    },
-                arrQ = objToSend.text.match(/[\"\']/ig) || [];
+                    };
 
-            console.log( objToSend, objToSend.text.length, arrQ );
-
-            if( objToSend.text.length > 0 && objToSend.text.length < 1000 && !arrQ.length ) {
+            if( objToSend.text.length > 0 && objToSend.text.length < 1000 ) {
                 $http.post('/send', objToSend)
                     .success(function (data) {
-                        console.log( " Data !!!: ", data );
                         if (data == '1') {
                             getPageData_(true);
                         }
@@ -299,7 +289,6 @@
                     if( data.data == '1' ) {
                         location.reload();
                     }
-                    console.log( data );
                 });
             }
         }

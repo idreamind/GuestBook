@@ -15,7 +15,8 @@ var mysql   = require('mysql'),
         database : 'guestbook'
     }),
     images = [],
-    names  = [];
+    names  = [],
+    isProduction = true;
 
 function MySQL() {
     var sql = this;
@@ -60,9 +61,9 @@ function MySQL() {
     // Get Authorization data:
     function getAuthorization( req, res ) {
 
-        var mail   = req.body.mail,
-            pass   = req.body.pass,
-            type   = req.body.type,
+        var mail   = filterData_( req.body.mail ),
+            pass   = filterData_( req.body.pass ),
+            type   = isNumber_( req.body.type ),
             count  = 0,
             isNew  = 1,
             resObj = {
@@ -72,12 +73,12 @@ function MySQL() {
                 hash: null
             };
 
+        mail = repQuotes_( mail );
+        pass = repQuotes_( pass );
+
         if( typeof mail == "string" && typeof pass == "string" ) {
-
-            mail = mail.replace(/'/g, "").replace(/"/g, "").trim();
-            pass = pass.replace(/'/g, "").replace(/"/g, "").trim();
-
             if( mail.length > 5 && pass.length > 5 ) {
+
                 var select = "SELECT userId, firstName, lastName, imgSrc, mail, about, hash FROM users WHERE password = '" + pass + "' AND mail = '" + mail + "'",
                     check  = "SELECT * FROM users WHERE mail = '" + mail + "'",
                     addNew = "INSERT INTO users ( mail, password ) VALUES('" + mail + "', '" + pass + "' )";
@@ -122,7 +123,7 @@ function MySQL() {
             if( rows.length > 0 ) {
 
                 var row  = rows[0],
-                    hash = hashGenerator_( row.mail),
+                    hash = hashGenerator_( row.mail ),
                     queryString = "UPDATE users SET hash = '" + hash + "' WHERE password = '" + pass + "' AND mail = '" + mail + "'";
                 row.hash = hash;
 
@@ -154,7 +155,7 @@ function MySQL() {
 //----------------------------------------------------------------------------------------------------------------------
     // Get Authorization Hash:
     function getHash( req, res ) {
-        var hash = req.body.hash,
+        var hash = filterData_( req.body.hash ),
             resObj = {
                 isIn: 0,
                 page: null,
@@ -196,7 +197,7 @@ function MySQL() {
 
         getConvertData_();
 
-        var userId = req.body.userId,
+        var userId = isNumber_( req.body.userId ),
             resObj = {
                 inMsgs:  null,
                 outMsgs: null
@@ -235,10 +236,10 @@ function MySQL() {
     // Add new Article:
     function addArticle( req, res ) {
 
-        var text = req.body.article,
-            time = req.body.time,
-            user = req.body.user,
-            img  = req.body.imgSrc,
+        var text = repQuotes_( req.body.article ),
+            time = filterData_( req.body.time ),
+            user = isNumber_( req.body.user ),
+            img  = repQuotes_( req.body.imgSrc ),
             addStr  = "INSERT INTO guestbook (user, time, imgSrc, text ) VALUES('" + user + "', '" + time + "', '" + img + "', '" + text + "' )";
 
         if( text && time && user && img ) {
@@ -252,10 +253,10 @@ function MySQL() {
 //----------------------------------------------------------------------------------------------------------------------
     // Send a new message:
     function sendMessage( req, res ) {
-        var fromId  = req.body.idFrom,
-            toId    = req.body.idTo,
-            time    = req.body.time,
-            msg     = req.body.text,
+        var fromId  = isNumber_( req.body.idFrom ),
+            toId    = isNumber_( req.body.idTo ),
+            time    = filterData_( req.body.time ),
+            msg     = repQuotes_( req.body.text ),
             addStr  = "INSERT INTO guestmsg ( fromId, toId, time, msg ) VALUES('" + fromId + "', '" + toId + "', '" + time + "', '" + msg + "' )";
 
         if( fromId && toId && time && msg ) {
@@ -269,14 +270,14 @@ function MySQL() {
 //----------------------------------------------------------------------------------------------------------------------
     // Update Profile:
     function updateProfile( req, res ) {
-        var type    = req.body.type     || '',
-            user    = req.body.user     || '',
-            imgLink = req.body.imgLink  || '',
-            ftName  = req.body.ftName   || '',
-            sdName  = req.body.sdName   || '',
-            email   = req.body.email    || '',
-            pass    = req.body.pass     || '',
-            about   = req.body.about    || '',
+        var type    = isNumber_( req.body.type )      || '',
+            user    = isNumber_( req.body.user )      || '',
+            imgLink = repQuotes_( req.body.imgLink )  || '',
+            ftName  = filterData_( req.body.ftName )  || '',
+            sdName  = filterData_( req.body.sdName )  || '',
+            email   = filterData_( req.body.email )   || '',
+            pass    = filterData_( req.body.pass )    || '',
+            about   = repQuotes_( req.body.about )    || '',
             updateStr = '';
 
         if( imgLink.length > 10 ) {
@@ -316,7 +317,7 @@ function MySQL() {
     // Upload Image:
     function uploadImage( req, res ) {
 
-        var file      = "img/imgUsers/" + req.files.file.name,
+        var file      = "img/imgUsers/" + repQuotes_( req.files.file.name ),
             user      = JSON.parse(req.body.data).user,
             updateStr = "UPDATE users SET imgSrc = '" + file + "' WHERE userId = '" + user + "'";
 
@@ -328,8 +329,8 @@ function MySQL() {
 //----------------------------------------------------------------------------------------------------------------------
     // Set New Password:
     function forgotPassword( req, res ) {
-        var mail        = req.body.mail,
-            pass        = req.body.pass,
+        var mail        = filterData_( req.body.mail ),
+            pass        = filterData_( req.body.pass ),
             queryString = "SELECT userId FROM users WHERE mail = '" + mail + "'",
             updateStr   = "UPDATE users SET password = '" + pass + "' WHERE mail = '" + mail + "'";
 
@@ -346,21 +347,24 @@ function MySQL() {
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
     // Private:   ------------------------------------------------------------------------------------------------------
 
     // To query response:   --------------------------------------------------------------------------------------------
     function connectionQuery_( res, queryString, handler ) {
         pool.getConnection( function( err, connection ) {
             if( err ) {
-                connection.release();
+                if( !isProduction ) {
+                    connection.release();
+                }
                 console.log({"code" : 100, "status" : "Error in connection database"});
             }
 
             connection.query( queryString, function( err, rows ) {
-                connection.release();
+                if( !isProduction ) {
+                    connection.release();
+                }
                 if( !err ) handler( res, rows );
-
                 connection.on('error', function( err ) {
                     res.json({"code" : 100, "status" : "Error in connection database"});
                 });
@@ -368,7 +372,7 @@ function MySQL() {
         });
     }
 
-    // Function to Make a Name:    -------------------------------------------------------------------------------------
+// Function to Make a Name:    -----------------------------------------------------------------------------------------
     function makeName_( el ) {
         var name = '';
             if( el.firstName && el.lastName ) {
@@ -397,6 +401,36 @@ function MySQL() {
         }
     }
 
+//----------------------------------------------------------------------------------------------------------------------
+    // Function Replace Quotes:
+    function repQuotes_( str ) {
+        if( typeof str != "string" ) {
+            return null;
+        }
+        return str.replace(/'/g,'\\\'').replace(/"/g,'\\\"').trim();
+    }
+
+    // Filter data:
+    function filterData_( str ) {
+        if( typeof str != "string" ) {
+            return null;
+        }
+        return str.replace(/'/g, '\\\'').replace(/"/g,'\\\"').replace(/;/g, '').replace(/select/gi,'').replace(/union/gi,'').trim();
+    }
+
+    // Is Number:
+    function isNumber_( str ) {
+        var number = parseInt( str );
+        if( number ) {
+            if( number > 0 ) {
+                return ( number + '' );
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 
 //----------------------------------------------------------------------------------------------------------------------
     // Function to Make a smt. like a hash:
@@ -417,7 +451,9 @@ function MySQL() {
 
         function handler( err, rows ) {
             if( err ) {
-                connection.release();
+                if( !isProduction ) {
+                    connection.release();
+                }
                 console.log( " Error in connection database" , err );
             }
 
