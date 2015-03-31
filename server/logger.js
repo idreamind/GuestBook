@@ -4,13 +4,14 @@
 'use strict';
 
 var Helper  = require('./helpers'),
-    helper  = new Helper();
+    helper  = new Helper(),
+    ip      = require('request-ip');
 
 function Logger() {
 
     var log      = this,
-        colWidth = 30,
-        colTime  = 30;
+        colWidth = 16,
+        colTime  = 27;
 
     log.getLog      = getLog;
     log.logToFile   = logToFile;
@@ -19,8 +20,10 @@ function Logger() {
     function getLog( req  ) {
 
         var dateTimeStr = helper.getCurrentTime(),
+            ipAddress   = ip.getClientIp(req),
             logArr      = [
                 req.hostname,
+                ipAddress,
                 dateTimeStr,
                 helper.pathType( req.path ),
                 req.path
@@ -33,7 +36,7 @@ function Logger() {
 
     // Write log string to file:
     function logToFile( str ) {
-        console.log( 'App at http://%s', str );
+        console.log( 'http://%s', str );
     }
 
     // Create string:
@@ -44,7 +47,7 @@ function Logger() {
         }
 
         var width = colWidth;
-        if( i === 0 ) {
+        if( i == 2 ) {
             width = colTime;
         }
 
